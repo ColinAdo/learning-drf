@@ -12,3 +12,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         return value.lower()
+    
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
