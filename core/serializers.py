@@ -13,12 +13,13 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
-    profile = ProfileSerializer(read_only=True, required=False)
-    
+    profile = ProfileSerializer(required=False)
+
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', 'age', 'password','profile', )
+        fields = ('id', 'username', 'email', 'age', 'password', 'profile', )
         extra_kwargs = {'password': {'write_only': True}}
+        read_only_fields = ['profile']
 
     def validate_email(self, value):
         return value.lower()
@@ -35,7 +36,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         Profile.objects.create(user=user)
         return user
-    
+
 
 class VoteSerializer(serializers.ModelSerializer):
 
@@ -49,3 +50,4 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+        # depth = 1
