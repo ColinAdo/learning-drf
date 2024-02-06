@@ -13,7 +13,10 @@ class CommentView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
 
 class ProfileView(generics.ListCreateAPIView):
-    queryset = Profile.objects.all()
+    def get_queryset(self):
+        queryset = Profile.objects.filter(user_id=self.kwargs['pk'])
+        return queryset
+    
     serializer_class = ProfileSerializer
 
 class VoteList(generics.ListCreateAPIView):
