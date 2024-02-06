@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Comment, Profile, Vote
+from .models import Comment, Profile, Vote, Account
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(required=False)
@@ -10,6 +11,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
@@ -44,6 +46,7 @@ class VoteSerializer(serializers.ModelSerializer):
         model = Vote
         fields = '__all__'
 
+
 class CommentSerializer(serializers.ModelSerializer):
     votes = VoteSerializer(many=True, read_only=True, required=False)
 
@@ -51,3 +54,20 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         # depth = 1
+
+
+class AccountSerializer(serializers.HyperlinkedModelSerializer):
+    User = get_user_model()
+    url = serializers.HyperlinkedIdentityField(
+        view_name='account-detail',
+    )
+    user = serializers.HyperlinkedRelatedField(
+        queryset=User.objects.all(),
+        view_name='user-detail',
+    )
+
+    class Meta:
+        model = Account
+        fields = ['url', 'id', 'account_name', 'user', 'created_at']
+        depth = 1
+        
